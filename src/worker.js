@@ -1,8 +1,11 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-
-
+    const key = url.searchParams.get("key");
+    const token = url.searchParams.get("t");
+    const action = url.searchParams.get("action");
+    const copyAttempt = url.searchParams.get("copy");
+    const path = url.searchParams.get("path");
 async fetch(request, env) {
   const url = new URL(request.url);
 
@@ -21,15 +24,6 @@ async fetch(request, env) {
 
   const key = url.searchParams.get("key");
   const token = url.searchParams.get("t");
-
-
-
-    const key = url.searchParams.get("key");
-    const token = url.searchParams.get("t");
-    const action = url.searchParams.get("action");
-    const copyAttempt = url.searchParams.get("copy");
-    const path = url.searchParams.get("path");
-
     // ---------------- base64url helpers ----------------
     const encodeToken = (data) =>
       btoa(JSON.stringify(data))
