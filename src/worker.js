@@ -1,11 +1,35 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
     const key = url.searchParams.get("key");
     const token = url.searchParams.get("t");
     const action = url.searchParams.get("action");
     const copyAttempt = url.searchParams.get("copy");
     const path = url.searchParams.get("path");
+
+    // ---------------- base64url helpers ----------------
+    const encodeToken = (data) =>
+      btoa(JSON.stringify(data))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+
+    const decodeToken = (str) =>
+      JSON.parse(atob(str.replace(/-/g, "+").replace(/_/g, "/")));
+
+    let decoded = null;
+
+    if (token) {
+      try {
+        decoded = decodeToken(token);
+      } catch {
+        decoded = null;
+      }
+    }
+
+    const target = decoded?.url || null;
+    const expires = decoded?.exp || null;
 
     // ---------------- expiry check ----------------
     if (expires && Date.now() > expires) {
