@@ -6,46 +6,6 @@ export default {
     const action = url.searchParams.get("action");
     const copyAttempt = url.searchParams.get("copy");
     const path = url.searchParams.get("path");
-async fetch(request, env) {
-  const url = new URL(request.url);
-
-  // ✅ SELF-HEALING D1 INIT (PUT IT HERE)
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS settings (
-      id INTEGER PRIMARY KEY,
-      password TEXT NOT NULL
-    )
-  `).run();
-
-  await env.DB.prepare(`
-    INSERT OR IGNORE INTO settings (id, password)
-    VALUES (1, 'change-me-now')
-  `).run();
-
-  const key = url.searchParams.get("key");
-  const token = url.searchParams.get("t");
-    // ---------------- base64url helpers ----------------
-    const encodeToken = (data) =>
-      btoa(JSON.stringify(data))
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-
-    const decodeToken = (str) =>
-      JSON.parse(atob(str.replace(/-/g, "+").replace(/_/g, "/")));
-
-    let decoded = null;
-
-    if (token) {
-      try {
-        decoded = decodeToken(token);
-      } catch {
-        decoded = null;
-      }
-    }
-
-    const target = decoded?.url || null;
-    const expires = decoded?.exp || null;
 
     // ---------------- expiry check ----------------
     if (expires && Date.now() > expires) {
