@@ -2,6 +2,28 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+
+async fetch(request, env) {
+  const url = new URL(request.url);
+
+  // ✅ SELF-HEALING D1 INIT (PUT IT HERE)
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS settings (
+      id INTEGER PRIMARY KEY,
+      password TEXT NOT NULL
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    INSERT OR IGNORE INTO settings (id, password)
+    VALUES (1, 'change-me-now')
+  `).run();
+
+  const key = url.searchParams.get("key");
+  const token = url.searchParams.get("t");
+
+
+
     const key = url.searchParams.get("key");
     const token = url.searchParams.get("t");
     const action = url.searchParams.get("action");
